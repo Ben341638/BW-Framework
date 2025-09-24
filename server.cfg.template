@@ -1,0 +1,77 @@
+# BW Framework Server Configuration
+
+# Server Info
+set sv_hostname "BW Framework Server"
+sets banner_detail "https://example.com/logo.png"
+sets banner_connecting "https://example.com/logo.png"
+sets locale "en"
+set sv_maxclients 48
+set sv_enforceGameBuild 2802
+
+# Server Settings
+set mysql_connection_string "mysql://{{mysql_user}}:{{mysql_password}}@{{mysql_host}}:{{mysql_port}}/{{mysql_database}}?charset=utf8mb4"
+set mysql_slow_query_warning 500
+set sv_licenseKey "changeme"
+sv_scriptHookAllowed 0
+sv_endpointPrivacy true
+sv_lan 0
+
+# Voice Settings
+setr voice_useNativeAudio true
+setr voice_useSendingRangeOnly true
+setr voice_defaultCycle "GRAVE"
+setr voice_defaultVolume 0.3
+setr voice_enableRadioAnim 1
+setr voice_syncData 1
+
+# Framework Settings
+setr bw_framework_debug false
+setr bw_framework_locale "en"
+setr bw_framework_inventory_slots 41
+setr bw_framework_max_weight 120000
+
+# Resources
+ensure oxmysql
+ensure bw_framework
+
+# Modules (uncomment to enable)
+ensure bw_admin
+ensure bw_ui
+ensure bw_testing
+# ensure bw_banking
+# ensure bw_inventory
+# ensure bw_phone
+# ensure bw_police
+# ensure bw_medical
+# ensure bw_mechanic
+# ensure bw_garages
+# ensure bw_fuel
+# ensure bw_voice
+
+# Add system admins
+add_ace group.admin command allow
+add_ace group.admin command.quit deny
+add_principal identifier.license:YOUR_LICENSE_HERE group.admin
+
+# Default Resources
+ensure chat
+ensure sessionmanager
+ensure baseevents
+
+# Restart announcement
+sets Discord "https://discord.gg/yourserver"
+sets Website "https://yourwebsite.com"
+sets Developer "BW Framework Team"
+
+# OneSync
+set onesync on
+set onesync_population true
+set onesync_forceMigration true
+set onesync_distanceCullVehicles true
+
+# Server Icon (96x96 PNG)
+load_server_icon icon.png
+
+# Misc
+sv_master1 ""
+set steam_webApiKey "none"

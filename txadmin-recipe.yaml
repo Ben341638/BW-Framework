@@ -1,0 +1,77 @@
+---
+$engine: 3
+$onesync: on
+name: BW Framework
+version: 1.0.0
+author: BW Framework Team
+description: A comprehensive FiveM roleplay framework
+
+variables:
+  servername: BW Framework Server
+  serverlogo: https://example.com/logo.png
+  language: en
+  maxplayers: 48
+  mysql_host: localhost
+  mysql_port: 3306
+  mysql_user: root
+  mysql_password: ""
+  mysql_database: bw_framework
+
+tasks: 
+  - action: download_github
+    src: Ben341638/BW-Framework
+    ref: main
+    dest: ./
+    
+  - action: download_file
+    url: https://github.com/overextended/oxmysql/releases/latest/download/oxmysql.zip
+    path: ./resources/[dependencies]/oxmysql.zip
+    
+  - action: unzip
+    src: ./resources/[dependencies]/oxmysql.zip
+    dest: ./resources/[dependencies]/
+    
+  - action: replace_string
+    file: ./shared/config.lua
+    search: "Config.DatabaseConfig = {"
+    replace: |
+      Config.DatabaseConfig = {
+          host = '{{mysql_host}}',
+          port = {{mysql_port}},
+          user = '{{mysql_user}}',
+          password = '{{mysql_password}}',
+          database = '{{mysql_database}}',
+    
+  - action: copy_path
+    src: ./server.cfg.template
+    dest: ./server.cfg
+    
+  - action: replace_string
+    file: ./server.cfg
+    search: "set sv_hostname \"BW Framework Server\""
+    replace: "set sv_hostname \"{{servername}}\""
+    
+  - action: replace_string
+    file: ./server.cfg
+    search: "set sv_maxclients 48"
+    replace: "set sv_maxclients {{maxplayers}}"
+    
+  - action: replace_string
+    file: ./server.cfg
+    search: "sets banner_detail \"https://example.com/logo.png\""
+    replace: "sets banner_detail \"{{serverlogo}}\""
+    
+  - action: replace_string
+    file: ./server.cfg
+    search: "sets locale \"en\""
+    replace: "sets locale \"{{language}}\""
+    
+  - action: connect_database
+    connection_string: "mysql://{{mysql_user}}:{{mysql_password}}@{{mysql_host}}:{{mysql_port}}/"
+    
+  - action: query_database
+    connection_string: "mysql://{{mysql_user}}:{{mysql_password}}@{{mysql_host}}:{{mysql_port}}/"
+    queries:
+      - "CREATE DATABASE IF NOT EXISTS {{mysql_database}};"
+      - "USE {{mysql_database}};"
+      - "SOURCE ./database/schema.sql;"
